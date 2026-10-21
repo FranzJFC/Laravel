@@ -12,6 +12,8 @@ class TaskController extends Controller
         $tasks = Task::latest()->get();
 
         return view('tasks', compact('tasks'));
+
+        
     }
 
     public function store(Request $request)
@@ -22,8 +24,6 @@ class TaskController extends Controller
         ]);
 
         Task::create($validated);
-
-        return redirect()->route('tasks.index')
-            ->with('success', 'Task added successfully.');
+        return redirect()->back()->with('success', 'Task created successfully.');
     }
 }
