@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class PageController extends Controller
 {
     public function about()
@@ -14,5 +12,13 @@ class PageController extends Controller
         ];
 
         return view('about', $data);
+    }
+
+    public function task(int $id)
+    {
+        return view('task', [
+            'title' => $id === 15 ? 'Buy groceries' : "Task #{$id}",
+            'id' => $id,
+        ]);
     }
 }

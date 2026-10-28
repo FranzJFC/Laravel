@@ -20,8 +20,10 @@
             </a>
 
             <nav class="navigation" aria-label="Main navigation">
-                <a href="{{ url('/about') }}">About</a>
+                <a href="{{ route('home') }}">Home</a>
                 <a href="{{ route('tasks.index') }}" aria-current="page">Tasks</a>
+                <a href="{{ route('membership.dashboard') }}">Membership</a>
+                <a href="{{ route('about') }}">About</a>
             </nav>
         </header>
 
