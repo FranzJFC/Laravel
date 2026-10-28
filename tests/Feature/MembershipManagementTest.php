@@ -70,6 +70,28 @@ test('deactivation retains the member record', function () {
     $this->assertDatabaseHas('members', ['id' => $member->id]);
 });
 
+test('a member and their transactions can be permanently deleted', function () {
+    $member = Member::create([
+        'member_number' => 'MEM-2026-DELETE',
+        'membership_category_id' => $this->category->id,
+        'membership_level_id' => $this->level->id,
+        'first_name' => 'Delete', 'last_name' => 'Example',
+        'joined_at' => '2026-01-01', 'status' => 'inactive',
+    ]);
+    $transaction = MembershipTransaction::create([
+        'reference_number' => 'TXN-20261028-DELETE01',
+        'member_id' => $member->id,
+        'type' => 'payment', 'amount' => 500, 'status' => 'completed',
+        'transaction_date' => '2026-10-28',
+    ]);
+
+    $this->delete(route('members.force-delete', $member))
+        ->assertRedirect(route('members.index'));
+
+    $this->assertDatabaseMissing('members', ['id' => $member->id]);
+    $this->assertDatabaseMissing('membership_transactions', ['id' => $transaction->id]);
+});
+
 test('completing a renewal extends membership validity once', function () {
     $member = Member::create([
         'member_number' => 'MEM-2026-GHI789',

@@ -88,6 +88,13 @@ class MemberController extends Controller
         return redirect()->route('members.index')->with('success', 'Member deactivated. Their records were retained.');
     }
 
+    public function forceDelete(Member $member)
+    {
+        $member->delete();
+
+        return redirect()->route('members.index')->with('success', 'Member and transaction history permanently deleted.');
+    }
+
     public function activate(Member $member)
     {
         $member->update(['status' => 'active']);

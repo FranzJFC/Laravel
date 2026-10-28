@@ -27,6 +27,7 @@ Route::prefix('membership')->group(function () {
     Route::get('/', [MembershipDashboardController::class, 'index'])->name('membership.dashboard');
     Route::resource('members', MemberController::class);
     Route::patch('members/{member}/activate', [MemberController::class, 'activate'])->name('members.activate');
+    Route::delete('members/{member}/permanent', [MemberController::class, 'forceDelete'])->name('members.force-delete');
 
     Route::get('categories', [MembershipCategoryController::class, 'index'])->name('categories.index');
     Route::post('categories', [MembershipCategoryController::class, 'store'])->name('categories.store');
