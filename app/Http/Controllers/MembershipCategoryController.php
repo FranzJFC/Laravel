@@ -42,7 +42,7 @@ class MembershipCategoryController extends Controller
 
     public function destroy(MembershipCategory $category)
     {
-        if ($category->members()->exists()) {
+        if ($category->members()->exists() || $category->applications()->exists()) {
             return back()->with('error', 'This category is in use. Mark it inactive instead.');
         }
 

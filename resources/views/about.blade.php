@@ -14,6 +14,7 @@
                 <a href="{{ route('home') }}">Home</a>
                 <a href="{{ route('tasks.index') }}">Tasks</a>
                 <a href="{{ route('membership.dashboard') }}">Membership</a>
+                <a href="{{ route('membership.create') }}">Apply for membership</a>
                 <a href="{{ route('about') }}" aria-current="page">About</a>
             </nav>
         </header>

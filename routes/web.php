@@ -1,15 +1,17 @@
 <?php
 
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MembershipApplicationController;
 use App\Http\Controllers\MembershipCategoryController;
 use App\Http\Controllers\MembershipDashboardController;
 use App\Http\Controllers\MembershipLevelController;
 use App\Http\Controllers\MembershipTransactionController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
+Route::get('/welcome', function () {
     return view('welcome');
 })->name('home');
 
@@ -44,3 +46,8 @@ Route::prefix('membership')->group(function () {
     Route::post('transactions', [MembershipTransactionController::class, 'store'])->name('transactions.store');
     Route::patch('transactions/{transaction}/status', [MembershipTransactionController::class, 'updateStatus'])->name('transactions.status');
 });
+
+Route::get('/', fn () => redirect()->route('membership.create'));
+Route::get('/membership/apply', [MembershipApplicationController::class, 'create'])->name('membership.create');
+Route::post('/membership/apply', [MembershipApplicationController::class, 'store'])->middleware('throttle:5,1,membership-submit')->name('membership.store');
+Route::get('/weather', [WeatherController::class, 'show'])->middleware('throttle:60,1,weather')->name('weather.show');

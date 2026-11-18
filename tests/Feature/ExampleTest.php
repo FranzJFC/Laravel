@@ -1,12 +1,12 @@
 <?php
 
 use App\Models\Task;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(DatabaseTransactions::class);
+uses(RefreshDatabase::class);
 
 test('the welcome page is available', function () {
-    $this->get('/')->assertSuccessful();
+    $this->get(route('home'))->assertSuccessful();
 });
 
 test('the about page displays the course and module', function () {
@@ -36,15 +36,15 @@ test('the tasks page displays the form and saved tasks', function () {
         ->assertSee('Not completed');
 });
 
-test('a valid task can be saved to MySQL', function () {
-    $response = $this->post('/tasks', [
+test('a valid task can be saved', function () {
+    $response = $this->from(route('tasks.index'))->post('/tasks', [
         'task_title' => 'Finish the database activity',
         'description' => 'Verify the saved record in the task list.',
     ]);
 
     $response
         ->assertRedirect(route('tasks.index'))
-        ->assertSessionHas('success', 'Task added successfully.');
+        ->assertSessionHas('success', 'Task created successfully.');
 
     $this->assertDatabaseHas('tasks', [
         'task_title' => 'Finish the database activity',

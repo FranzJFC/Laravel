@@ -6,6 +6,7 @@
     <meta name="description" content="Membership management and transaction processing system">
     <title>@yield('title', 'Dashboard') | MemberFlow</title>
     <link rel="stylesheet" href="{{ asset('css/membership.css') }}">
+    @stack('styles')
 </head>
 <body>
     <div class="app-shell">
@@ -15,6 +16,7 @@
                 <span><strong>MemberFlow</strong><small>Membership system</small></span>
             </a>
             <nav class="nav" aria-label="Membership navigation">
+                <a class="{{ request()->routeIs('membership.create') ? 'active' : '' }}" href="{{ route('membership.create') }}" @if(request()->routeIs('membership.create')) aria-current="page" @endif>Apply</a>
                 <a class="{{ request()->routeIs('membership.dashboard') ? 'active' : '' }}" href="{{ route('membership.dashboard') }}">Overview</a>
                 <a class="{{ request()->routeIs('members.*') ? 'active' : '' }}" href="{{ route('members.index') }}">Members</a>
                 <a class="{{ request()->routeIs('transactions.*') ? 'active' : '' }}" href="{{ route('transactions.index') }}">Transactions</a>
@@ -32,7 +34,7 @@
         <main class="main">
             <header class="topbar">
                 <div>
-                    <p class="eyebrow">Membership administration</p>
+                    <p class="eyebrow">@yield('eyebrow', 'Membership administration')</p>
                     <h1>@yield('heading', 'Overview')</h1>
                 </div>
                 <div class="top-actions">@yield('actions')</div>
@@ -51,5 +53,6 @@
             @yield('content')
         </main>
     </div>
+    @stack('scripts')
 </body>
 </html>
