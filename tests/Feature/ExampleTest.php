@@ -1,9 +1,14 @@
 <?php
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    $this->actingAs(User::factory()->create(['role' => 'admin']));
+});
 
 test('the welcome page is available', function () {
     $this->get(route('home'))->assertSuccessful();

@@ -30,7 +30,7 @@ class MembershipLevelController extends Controller
 
     public function destroy(MembershipLevel $level)
     {
-        if ($level->members()->exists()) {
+        if ($level->members()->exists() || $level->applications()->exists()) {
             return back()->with('error', 'This level is in use. Mark it inactive instead.');
         }
 

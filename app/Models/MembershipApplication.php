@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MembershipApplication extends Model
 {
-    protected $fillable = ['membership_category_id', 'reference_no', 'full_name', 'email', 'phone', 'address', 'latitude', 'longitude', 'status', 'verification_sent_at'];
+    protected $fillable = ['membership_category_id', 'membership_level_id', 'user_id', 'reference_no', 'full_name', 'email', 'phone', 'address', 'latitude', 'longitude', 'status', 'verification_sent_at'];
 
     protected function casts(): array
     {

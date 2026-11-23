@@ -16,13 +16,7 @@
                 </span>
                 <span>Student Portal</span>
             </a>
-            <nav class="navigation" aria-label="Main navigation">
-                <a href="{{ route('home') }}" aria-current="page">Home</a>
-                <a href="{{ route('tasks.index') }}">Tasks</a>
-                <a href="{{ route('membership.dashboard') }}">Membership</a>
-                <a href="{{ route('membership.create') }}">Apply for membership</a>
-                <a href="{{ route('about') }}">About</a>
-            </nav>
+            @include('partials.portal-navigation')
         </header>
 
         <main>

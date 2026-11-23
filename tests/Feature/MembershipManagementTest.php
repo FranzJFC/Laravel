@@ -4,11 +4,13 @@ use App\Models\Member;
 use App\Models\MembershipCategory;
 use App\Models\MembershipLevel;
 use App\Models\MembershipTransaction;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->actingAs(User::factory()->create(['role' => 'admin']));
     $this->category = MembershipCategory::create([
         'name' => 'Regular', 'slug' => 'regular', 'is_active' => true,
     ]);

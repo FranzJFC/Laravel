@@ -11,12 +11,12 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar">
-            <a class="brand" href="{{ route('membership.dashboard') }}">
+            <a class="brand" href="{{ route(auth()->user()->isAdmin() ? 'membership.dashboard' : 'member.dashboard') }}">
                 <span class="brand-mark">M</span>
                 <span><strong>MemberFlow</strong><small>Membership system</small></span>
             </a>
             <nav class="nav" aria-label="Membership navigation">
-                <a class="{{ request()->routeIs('membership.create') ? 'active' : '' }}" href="{{ route('membership.create') }}" @if(request()->routeIs('membership.create')) aria-current="page" @endif>Apply</a>
+                @if(auth()->user()->isAdmin())
                 <a class="{{ request()->routeIs('membership.dashboard') ? 'active' : '' }}" href="{{ route('membership.dashboard') }}">Overview</a>
                 <a class="{{ request()->routeIs('members.*') ? 'active' : '' }}" href="{{ route('members.index') }}">Members</a>
                 <a class="{{ request()->routeIs('transactions.*') ? 'active' : '' }}" href="{{ route('transactions.index') }}">Transactions</a>
@@ -27,14 +27,24 @@
                 <a href="{{ route('home') }}">Portal home</a>
                 <a href="{{ route('tasks.index') }}">Tasks</a>
                 <a href="{{ route('about') }}">About</a>
+                @else
+                <a class="{{ request()->routeIs('member.dashboard') ? 'active' : '' }}" href="{{ route('member.dashboard') }}">My membership</a>
+                <a class="{{ request()->routeIs('tasks.*') ? 'active' : '' }}" href="{{ route('tasks.index') }}">Tasks</a>
+                <a class="{{ request()->routeIs('member.transactions') ? 'active' : '' }}" href="{{ route('member.transactions') }}">My transactions</a>
+                <a class="{{ request()->routeIs('member.payments') ? 'active' : '' }}" href="{{ route('member.payments') }}">My payments</a>
+                @endif
             </nav>
-            <div class="sidebar-note"><span></span> System online</div>
+            <div class="sidebar-account">
+                <span class="account-role">{{ auth()->user()->isAdmin() ? 'Administrator' : 'Member account' }}</span>
+                <strong>{{ auth()->user()->name }}</strong>
+                <form method="POST" action="{{ route('logout') }}">@csrf<button class="logout-button" type="submit">Sign out &rarr;</button></form>
+            </div>
         </aside>
 
         <main class="main">
             <header class="topbar">
                 <div>
-                    <p class="eyebrow">@yield('eyebrow', 'Membership administration')</p>
+                    <p class="eyebrow">@yield('eyebrow', auth()->user()->isAdmin() ? 'Membership administration' : 'Member portal')</p>
                     <h1>@yield('heading', 'Overview')</h1>
                 </div>
                 <div class="top-actions">@yield('actions')</div>

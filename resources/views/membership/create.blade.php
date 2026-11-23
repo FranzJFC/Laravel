@@ -1,11 +1,9 @@
-@extends('layouts.membership')
+@extends('layouts.auth')
 
-@section('title', 'Membership Application')
+@section('title', 'Member Signup')
 @section('eyebrow', 'Become a member')
-@section('heading', 'Membership Application')
-@section('actions')
-    <a class="button secondary" href="{{ route('home') }}">Back to portal</a>
-@endsection
+@section('heading', 'Create your membership.')
+@section('intro', 'Choose your membership, create your login, and tell us where you are. Already a member? Use member login.')
 
 @push('styles')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
@@ -13,8 +11,7 @@
 @endpush
 
 @section('content')
-    <p class="section-copy application-intro">Your membership starts here. Tell us a little about yourself and choose your location to get started.</p>
-    <form method="POST" action="{{ route('membership.store') }}" class="application-form">
+    <form method="POST" action="{{ route('register.store') }}" class="application-form">
         @csrf
         <div class="application-grid">
             <section class="panel" aria-labelledby="details-heading">
@@ -23,6 +20,7 @@
                         <span class="application-step" aria-hidden="true">01</span>
                         <div><p class="kicker">About you</p><h2 id="details-heading">Membership details</h2></div>
                     </div>
+
                 </div>
                 <p class="section-copy">Choose your category and enter your contact information. Fields marked * are required.</p>
                 <div class="form-grid">
@@ -31,10 +29,21 @@
                         <select id="category" name="membership_category_id" required @error('membership_category_id') aria-invalid="true" aria-describedby="category-error" @enderror>
                             <option value="">Choose a category</option>
                             @foreach($categories as $category)
-                                <option value="{{ $category->id }}" @selected(old('membership_category_id') == $category->id)>{{ $category->name }}{{ $category->level ? ' - '.$category->level : '' }} (&#8369;{{ number_format($category->fee, 2) }})</option>
+                                <option value="{{ $category->id }}" @selected(old('membership_category_id') == $category->id)>{{ $category->name }}{{ $category->level ? ' - '.$category->level : '' }}</option>
                             @endforeach
                         </select>
                         @error('membership_category_id') <span id="category-error" class="error">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="field full">
+                        <label for="membership_level_id">Membership level / subscription <span aria-hidden="true">*</span></label>
+                        <select id="membership_level_id" name="membership_level_id" required>
+                            <option value="">Choose a membership level</option>
+                            @foreach($levels as $level)
+                                <option value="{{ $level->id }}" @selected(old('membership_level_id') == $level->id)>{{ $level->name }} &mdash; &#8369;{{ number_format($level->fee, 2) }} / {{ $level->validity_months }} months</option>
+                            @endforeach
+                        </select>
+                        <p class="application-hint">Your subscription fee is based on this level. No payment is collected during signup.</p>
+                        @error('membership_level_id') <span class="error">{{ $message }}</span> @enderror
                     </div>
                     <div class="field full">
                         <label for="full_name">Full name <span aria-hidden="true">*</span></label>
@@ -45,7 +54,17 @@
                         <label for="email">Email address <span aria-hidden="true">*</span></label>
                         <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="you@example.com" maxlength="255" autocomplete="email" required @error('email') aria-invalid="true" aria-describedby="email-error" @enderror>
                         @error('email') <span id="email-error" class="error">{{ $message }}</span> @enderror
-                        <p class="application-hint">We'll send your application reference to this email.</p>
+                        <p class="application-hint">Use this email to sign in. We'll send a verification link and application reference here.</p>
+                    </div>
+                    <div class="field full">
+                        <label for="password">Password <span aria-hidden="true">*</span></label>
+                        <input id="password" type="password" name="password" minlength="8" autocomplete="new-password" required aria-describedby="password-hint">
+                        <p id="password-hint" class="application-hint">At least 8 characters, including letters and numbers.</p>
+                        @error('password') <span class="error">{{ $message }}</span> @enderror
+                    </div>
+                    <div class="field full">
+                        <label for="password_confirmation">Confirm password <span aria-hidden="true">*</span></label>
+                        <input id="password_confirmation" type="password" name="password_confirmation" minlength="8" autocomplete="new-password" required>
                     </div>
                     <div class="field full">
                         <label for="phone">Phone <span class="application-optional">Optional</span></label>
@@ -88,8 +107,8 @@
             </section>
         </div>
         <div class="application-submit panel">
-            <div><h2>Ready to join?</h2><p>Your application will be saved as pending verification. Keep the reference number sent to your email.</p></div>
-            <button class="button" type="submit">Create membership application <span aria-hidden="true">&rarr;</span></button>
+            <div><h2>Ready to join?</h2><p>Create your account and submit your application for verification. You can then view tasks, your transactions, and your payments.</p></div>
+            <button class="button" type="submit">Sign up &amp; apply <span aria-hidden="true">&rarr;</span></button>
         </div>
     </form>
 @endsection

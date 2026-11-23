@@ -12,7 +12,7 @@ class Member extends Model
     protected $fillable = [
         'member_number', 'membership_category_id', 'membership_level_id', 'first_name',
         'last_name', 'email', 'phone', 'date_of_birth', 'organization', 'address',
-        'joined_at', 'expires_at', 'status',
+        'joined_at', 'expires_at', 'status', 'user_id',
     ];
 
     protected function casts(): array
@@ -23,6 +23,11 @@ class Member extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(MembershipCategory::class, 'membership_category_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function level(): BelongsTo

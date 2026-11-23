@@ -18,4 +18,9 @@ class MembershipLevel extends Model
     {
         return $this->hasMany(Member::class);
     }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(MembershipApplication::class);
+    }
 }

@@ -10,13 +10,7 @@
     <div class="page">
         <header class="site-header">
             <a class="brand" href="{{ route('home') }}"><span class="brand-mark">i</span><span>Student Portal</span></a>
-            <nav class="navigation" aria-label="Main navigation">
-                <a href="{{ route('home') }}">Home</a>
-                <a href="{{ route('tasks.index') }}">Tasks</a>
-                <a href="{{ route('membership.dashboard') }}">Membership</a>
-                <a href="{{ route('membership.create') }}">Apply for membership</a>
-                <a href="{{ route('about') }}" aria-current="page">About</a>
-            </nav>
+            @include('partials.portal-navigation')
         </header>
         <main class="narrow-page">
             <section class="surface content-card">

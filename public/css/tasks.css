@@ -723,3 +723,5 @@ textarea.is-invalid {
         transition-duration: 0.01ms !important;
     }
 }
+
+.navigation form{display:flex;margin:0}.navigation button{border:0;border-radius:10px;background:transparent;padding:9px 14px;font:inherit;font-size:.88rem;font-weight:680;color:var(--ink-soft);cursor:pointer}.navigation button:hover{color:var(--primary-dark)}

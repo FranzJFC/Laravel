@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\MembershipApplication;
 use App\Models\MembershipCategory;
+use App\Models\MembershipLevel;
 use App\Notifications\MembershipApplicationSubmitted;
 use Database\Seeders\MembershipCategorySeeder;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,10 +20,23 @@ class MembershipApplicationTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected MembershipLevel $level;
+
+    private function signupData(int $categoryId): array
+    {
+        return [
+            'membership_category_id' => $categoryId, 'membership_level_id' => $this->level->id,
+            'full_name' => 'Ana Cruz', 'email' => 'ana@example.test',
+            'password' => 'MemberPass123', 'password_confirmation' => 'MemberPass123',
+            'latitude' => 14.5995, 'longitude' => 120.9842,
+        ];
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
         Http::preventStrayRequests();
+        $this->level = MembershipLevel::create(['name' => 'Basic', 'slug' => 'basic', 'fee' => 500, 'validity_months' => 12, 'is_active' => true]);
     }
 
     public function test_application_is_stored_and_email_notification_is_sent(): void
@@ -31,12 +45,9 @@ class MembershipApplicationTest extends TestCase
         $this->seed(MembershipCategorySeeder::class);
         $category = MembershipCategory::where('name', 'Regular')->firstOrFail();
 
-        $response = $this->post(route('membership.store'), [
-            'membership_category_id' => $category->id, 'full_name' => 'Ana Cruz',
-            'email' => 'ana@example.test', 'latitude' => 14.5995, 'longitude' => 120.9842,
-        ]);
+        $response = $this->post(route('register.store'), $this->signupData($category->id));
 
-        $response->assertRedirect(route('membership.create'))->assertSessionHas('success');
+        $response->assertRedirect(route('member.dashboard'))->assertSessionHas('success');
         $this->assertDatabaseHas('membership_applications', [
             'email' => 'ana@example.test', 'status' => 'pending',
             'membership_category_id' => $category->id,
@@ -59,9 +70,10 @@ class MembershipApplicationTest extends TestCase
     {
         $this->seed(MembershipCategorySeeder::class);
         MembershipCategory::create(['name' => 'Inactive category', 'slug' => 'inactive', 'is_active' => false]);
-        $this->get('/')->assertRedirect(route('membership.create'));
-        $this->get(route('membership.create'))->assertOk()
-            ->assertSee('Regular')->assertSee('500.00')->assertSee('Student')->assertSee('250.00')
+        $this->get('/')->assertRedirect(route('login'));
+        $this->get(route('membership.create'))->assertRedirect(route('register'));
+        $this->get(route('register'))->assertOk()
+            ->assertSee('Regular')->assertSee('500.00')->assertSee('Student')->assertSee('Basic')
             ->assertSee('leaflet@1.9.4')->assertSee('OpenStreetMap')->assertDontSee('Inactive category');
     }
 
@@ -88,10 +100,8 @@ class MembershipApplicationTest extends TestCase
         $level = DB::transactionLevel();
         DB::beginTransaction();
         try {
-            $this->post(route('membership.store'), [
-                'membership_category_id' => $category->id, 'full_name' => 'Ana Cruz',
-                'email' => 'ana@example.test',
-            ])->assertRedirect(route('membership.create'));
+            $this->post(route('register.store'), $this->signupData($category->id))
+                ->assertRedirect(route('member.dashboard'));
             $this->assertDatabaseCount('membership_applications', 1);
             $this->assertSame($jobsBefore, DB::table('jobs')->count());
         } finally {

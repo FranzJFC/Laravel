@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\MembershipApplication;
 use App\Models\MembershipCategory;
 use App\Models\MembershipLevel;
 use App\Models\MembershipTransaction;
@@ -76,7 +77,12 @@ class MemberController extends Controller
     public function update(Request $request, Member $member)
     {
         $validated = $this->validateMember($request, $member);
-        $member->update($validated);
+        DB::transaction(function () use ($member, $validated) {
+            $member->update($validated);
+            if ($member->status === 'active') {
+                $this->activateMember($member);
+            }
+        });
 
         return redirect()->route('members.show', $member)->with('success', 'Member details updated.');
     }
@@ -97,9 +103,20 @@ class MemberController extends Controller
 
     public function activate(Member $member)
     {
-        $member->update(['status' => 'active']);
+        DB::transaction(fn () => $this->activateMember($member));
 
-        return back()->with('success', 'Member reactivated.');
+        return back()->with('success', 'Membership activated.');
+    }
+
+    private function activateMember(Member $member): void
+    {
+        $member->update([
+            'status' => 'active',
+            'expires_at' => $member->expires_at ?? today()->addMonths($member->level->validity_months),
+        ]);
+        if ($member->user_id) {
+            MembershipApplication::where('user_id', $member->user_id)->where('status', 'pending')->update(['status' => 'approved']);
+        }
     }
 
     private function validateMember(Request $request, ?Member $member = null): array

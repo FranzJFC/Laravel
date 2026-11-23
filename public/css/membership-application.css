@@ -170,3 +170,6 @@
     .application-location #map { height: 280px; }
     .application-submit .button { width: 100%; }
 }
+
+.auth-page .application-location { position: sticky; top: 24px; }
+@media (max-width: 1120px) { .auth-page .application-location { position: static; } }

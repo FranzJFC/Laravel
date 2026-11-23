@@ -7,9 +7,11 @@
         <section class="panel profile-card">
             <div class="profile-avatar">{{ strtoupper(substr($member->first_name,0,1).substr($member->last_name,0,1)) }}</div>
             <h2>{{ $member->full_name }}</h2><p>{{ $member->member_number }}</p><span class="status {{ $member->status }}">{{ ucfirst($member->status) }}</span>
-            <dl class="details"><div><dt>Category</dt><dd>{{ $member->category->name }}</dd></div><div><dt>Level</dt><dd>{{ $member->level->name }}</dd></div><div><dt>Joined</dt><dd>{{ $member->joined_at->format('M d, Y') }}</dd></div><div><dt>Valid until</dt><dd>{{ $member->expires_at?->format('M d, Y') ?? 'Not set' }}</dd></div><div><dt>Email</dt><dd>{{ $member->email ?: 'Not provided' }}</dd></div><div><dt>Phone</dt><dd>{{ $member->phone ?: 'Not provided' }}</dd></div><div><dt>Organization</dt><dd>{{ $member->organization ?: 'Not provided' }}</dd></div><div><dt>Address</dt><dd>{{ $member->address ?: 'Not provided' }}</dd></div></dl>
+            <dl class="details"><div><dt>Category</dt><dd>{{ $member->category->name }}</dd></div><div><dt>Level</dt><dd>{{ $member->level->name }}</dd></div><div><dt>Joined</dt><dd>{{ $member->joined_at->format('M d, Y') }}</dd></div><div><dt>Valid until</dt><dd>{{ $member->expires_at?->format('M d, Y') ?? 'Not set' }}</dd></div><div><dt>Email</dt><dd>{{ $member->email ?: 'Not provided' }}</dd></div><div><dt>Email verification</dt><dd>{{ $member->user_id ? ($member->user?->hasVerifiedEmail() ? 'Verified' : 'Not verified') : 'No login account' }}</dd></div><div><dt>Phone</dt><dd>{{ $member->phone ?: 'Not provided' }}</dd></div><div><dt>Organization</dt><dd>{{ $member->organization ?: 'Not provided' }}</dd></div><div><dt>Address</dt><dd>{{ $member->address ?: 'Not provided' }}</dd></div></dl>
             <div class="member-actions">
-                @if($member->status === 'inactive')
+                @if($member->status === 'pending')
+                    <form method="POST" action="{{ route('members.activate', $member) }}">@csrf @method('PATCH')<button class="button full-button">Approve membership</button></form>
+                @elseif($member->status === 'inactive')
                     <form method="POST" action="{{ route('members.activate', $member) }}">@csrf @method('PATCH')<button class="button full-button">Reactivate member</button></form>
                 @else
                     <form method="POST" action="{{ route('members.destroy', $member) }}" onsubmit="return confirm('Deactivate this member? Their records will be retained.')">@csrf @method('DELETE')<button class="button warning-button full-button">Deactivate member</button></form>

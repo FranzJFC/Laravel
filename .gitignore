@@ -19,6 +19,11 @@ auth.json
 .pypirc
 .netrc
 .git-credentials
+.envrc
+/.direnv/
+.htpasswd
+.pgpass
+.my.cnf
 /.aws/
 /.ssh/
 /secrets/
@@ -42,7 +47,11 @@ id_ed25519
 *.db-*
 *.sql
 *.sql.gz
+*.sql.bz2
+*.sql.xz
 *.sql.zip
+*.dump
+*.dump.gz
 *.bak
 *.backup
 *.old
